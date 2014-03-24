@@ -1,0 +1,66 @@
+entry start 
+start: 
+   ;sensibly setup segment registers 
+   mov   ax,es 
+   mov   ds,ax 
+   ;get cursor position 
+   mov     ah,#0x03 
+   xor     bh,bh 
+   int     0x10 
+
+   ;write msg1 at position + 1 row at column 0. 
+   mov   dl,#0x00 
+   add   dh,#0x01 
+   mov     cx,#28 
+   mov     bx,#0x0007 
+   mov     bp,#msg1 
+   mov     ax,#0x1301 
+   int     0x10 
+
+   ;return VBE controller information 
+   ;put it on memory after the program. VBE2 has to be there already. 
+   mov   di,#progend 
+   mov   ax,#0x4f00 
+   int   0x10 
+
+   ;write msg2 at new position + 1 row. 
+   add   dh,#0x01 
+   mov     cx,#12 
+   mov     bx,#0x0007 
+   mov     bp,#msg2 
+   mov     ax,#0x1301 
+   int     0x10 
+    
+   ;print out the VBE version, major version 
+   mov   di,#progend 
+   add   di,#0x04 
+   mov   ax,[di] 
+   ;mov   ax,foo 
+   push   ax 
+   mov   al,ah 
+   add   al,#0x30 
+   mov   ah,#0x0E 
+   int   0x10 
+
+    
+   ;put a period 
+   mov   al,#0x2E 
+   mov   ah,#0x0E 
+   int   0x10 
+
+   ;put VBE version, minor version 
+   pop   ax 
+   add   al,#0x30 
+   mov   ah,#0x0E 
+   int   0x10 
+
+loop1:   jmp   loop1 
+
+
+msg1: 
+   .ascii "Poly-p man's VBE Tester v1.0" 
+msg2: 
+   .ascii "VBE Version "
+progend: 
+   .ascii "VBE2" 
+foo: 

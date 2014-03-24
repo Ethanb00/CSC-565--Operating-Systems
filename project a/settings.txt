@@ -1,0 +1,3 @@
+DiskA mynewfloppy.img
+ROM resource/bios.bin
+VideoROM resource/vgabios.bin
